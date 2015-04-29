@@ -78,4 +78,4 @@ Up to this point we have three aspects to consider:
 - Delegates that provide an implementation for the finer grained tasks.
 - Execution configuration which select between delegate implementation alternates.  
 
-## Delegation Prinicipal 
+## Delegation Prinicipal
