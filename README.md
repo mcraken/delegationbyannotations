@@ -9,6 +9,7 @@ Delegation as a concept is not exclusive to software. On the contrary, we use de
 Let us say, that someone needs to get from point A to B in a timely manner. The answer to this challenge is location and speed. You need to know the location of B and you need to get there relatively fast. So the context of executing the task at hand is distance and velocity. Up to this point we have not discussed the specifics of execution which is how to locate and travel to point B. You can locate B using a map which leads to proper calculation of distance. After calculating the distance, you can calculate the velocity on which you need to travel to point B and hence determine you selection of transportation.
 
 ``java
+
 class TravelingTask{
 
     private Locator locator;
@@ -24,4 +25,5 @@ class TravelingTask{
         vehicle.go(distance, time);
       }
     }
+    
 ``
