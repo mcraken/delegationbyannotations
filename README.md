@@ -117,7 +117,7 @@ AnnotatedEntity someAnnotatedEntity = new AnnotatedEntity();
 TravelingTask travelingTask = new TravelingTask();
 travelingTask.registerDelegate(someAnnotatedEntity);
 ```
-That it! we could leave the heavy lifting to be taking care of by the delegator. Such as registering the delegate and finding the right methods to call at runtime. The rest of this tutorial I will explain how to implement delegation by annotation. The proposed solution should be taken as a refernece and not as a fully fledged solution.
+That it! we could leave the heavy lifting to be taken care of by the delegator. Such as registering the delegate and finding the right methods to call at runtime. The rest of this tutorial I will explain how to implement delegation by annotation. The proposed solution should be taken as a refernece and not as a fully fledged solution.
 
 ## Delegation Principal 
 
@@ -372,4 +372,21 @@ class TravellingTask {
 		transportationPrincipal = new TransportationPrincipal(Transportation.class, TransportationVehicle.class, transportationAgent);
 	}
 }
+```
+Finally, here is register delegate method which includes the big picture of how the whole thing works.
+
+![sequence diagram2](https://cloud.githubusercontent.com/assets/6278849/7412240/f4b3f5d2-ef40-11e4-9f03-0f45a75b933a.jpg)
+
+```java
+	public void registerDelegate(Object receiver){
+		
+		for(Method method : receiver.getClass().getMethods()){
+			
+			locatorPrincipal.apply(receiver, method);
+			
+			transportationPrincipal.apply(receiver, method);
+			
+		}
+		
+	}
 ```
