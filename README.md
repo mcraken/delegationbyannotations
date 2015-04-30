@@ -28,7 +28,19 @@ Now let's propose a solution for the above challenge. First, the context of exec
 
 	protected abstract  Double calculateDistance(Point a, Point b);
 ```
-Both of calculate time and distance are template methods. Template design pattern is a form of delegation by inhetitence. Delegation by inheritence postpones the implementation until its picked up by one of the subclasses of the execution context. Here is another solution to the same problem:
+Both of calculate time and distance are template methods. Template design pattern is a form of delegation by inhetitence. Delegation by inheritence postpones the implementation until its picked up by one of the subclasses of the execution context. Here is another solution to the same problem, let us create two interfaces each of which corresponds to one of the template methods as follows:
+
+```java
+public interface Locator {
+	public Double calculateDistance(Point a, Point b);
+}
+
+public interface Transportation {
+	public Long calculateTime(Double distance);
+}
+```
+
+and then we could change the travel method to depend on the two interfaces as follows:
 
 ```java
 	// Delegation by composition
