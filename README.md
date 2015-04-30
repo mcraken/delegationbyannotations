@@ -99,6 +99,8 @@ That it! we could leave the heavy lifting to be taking care of by the delegator.
 
 ## Delegation Principal 
 
-A delegation principal applies validation rules on any arbitrary method assigned with a certain annotation, in case of being a good match it register that particular method with the delgator as a future execution refernce. Taking into account that the delegate interface should at least declare one method with a Delegate annotation.
+A delegation principal applies validation rules on any arbitrary method assigned with a certain annotation, in case of being a good match it register that particular method with the delgator as a future execution refernce. Taking into account that the delegate interface should at least declare one method with a Delegate annotation. Now, let us look at some sequence diagrams that explains how delegation principal works.
+
+### Creation
 
 ![create delegation principal](https://cloud.githubusercontent.com/assets/6278849/7410334/1be9d0d0-ef2e-11e4-9652-1a23fae3fd49.jpg)
