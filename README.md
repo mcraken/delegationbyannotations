@@ -101,6 +101,22 @@ That it! we could leave the heavy lifting to be taking care of by the delegator.
 
 A delegation principal applies validation rules on any arbitrary method assigned with a certain annotation, in case of being a good match it register that particular method with the delgator as a future execution refernce. Taking into account that the delegate interface should at least declare one method with a Delegate annotation. Now, let us look at some sequence diagrams that explains how delegation principal works.
 
+### Definition
+
+```java
+// D -> Any arbitrary delegate, A -> Any annotation type.
+public abstract class DelegationPrincipal<D, A extends Annotation> {
+
+	private Class<A> annotationClass;
+	
+	// Delegation agent should register the delegate with the delegator class
+	private DelegationAgent<D, A> delegationAgent;
+	
+	// Signature of delegate method.
+	private Class<?> returnType;
+	private Class<?>[] parameters;
+```
+
 ### Creation
 
 ![create delegation principal](https://cloud.githubusercontent.com/assets/6278849/7410334/1be9d0d0-ef2e-11e4-9652-1a23fae3fd49.jpg)
@@ -114,10 +130,53 @@ A delegation principal applies validation rules on any arbitrary method assigned
 		this.annotationClass = annotationClass;
 		this.delegationAgent = delegationAgent;
 		
+		// Use delegate class to find a method annotated with Delegate annotation
 		Method delegateMethod = findDelegateMethod(delegateClass);
 		
 		this.returnType = delegateMethod.getReturnType();
 		this.parameters = delegateMethod.getParameterTypes();
 	}
+	
+	private Method findDelegateMethod(Class<D> delegateClass) {
+		
+		Method delegateMethod = null;
+		
+		for(Method method : delegateClass.getMethods()){
+			if(method.getAnnotation(Delegate.class) != null){
+				delegateMethod = method;
+				break;
+			}
+		}
+		
+		if(delegateMethod == null)
+			throw new RuntimeException("Could find any method annotated with delegate");
+		
+		return delegateMethod;
+	}
 ```
 ### Apply
+![apply](https://cloud.githubusercontent.com/assets/6278849/7410720/d40f464c-ef31-11e4-96f8-a41b4a54f114.jpg)
+
+```java
+	public void apply(Object receiver, Method target){
+		
+		// find the if method is assigned with target annotation.
+		A annotation = getTargetAnnotation(target);
+
+		if(annotation != null ){
+			
+			// checks against method signature to gurantee full match
+			// throws runtime exception in case of failure
+			isMethodValid(target, annotation);
+			
+			// Returns an instance of delegate class,
+			// apply is a template method and 
+			// should be implemented by child classes
+			D delegate = apply(receiver, target, annotation);
+			
+			// Delegation agent should be aware of how to register with the delegator
+			delegationAgent.register(annotation, delegate);
+		}
+
+	}
+```
