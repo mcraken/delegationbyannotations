@@ -189,6 +189,62 @@ public abstract class DelegationPrincipal<D, A extends Annotation> {
 			// Delegation agent should be aware of how to register with the delegator
 			delegationAgent.register(annotation, delegate);
 		}
-
+	
+	protected abstract D apply(Object receiver, Method target, A annotation);
+	
 	}
 ```
+
+## Implementing a Principl
+The following code snippets explains how to extend delegation principal in order to create two new principals one for the Transportation interface and another one for the Locator.
+
+### Locator
+
+Start with the annotation
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface MapLocator {
+	MAP map();
+}
+```
+
+Now, create the LocatorPrincipal class
+
+```java
+
+// D -> Locator and A -> MapLocator annotation. 
+public class TransportationPrincipal extends DelegationPrincipal<Locator, MapLocator> {
+
+	public TransportationPrincipal(Class<Locator> delegateClass,
+			Class<MapLocator> annotationClass,
+			DelegationAgent<Locator, MapLocator> delegationAgent) {
+		
+		super(delegateClass, annotationClass, delegationAgent);
+	}
+	
+	@Override
+	protected Locator apply(final Object receiver, final Method target,
+			final MapLocator annotation) {
+		
+		// Create new locator delegate instance to register with the delgator class.
+		return new Locator() {
+			
+			public Double calculateDistance(Point a, Point b) {
+				
+				try {
+					// invoke target method to calculate the distance				
+					return (Double) target.invoke(receiver, a, b);
+					
+				} catch (Exception e) {
+					
+					throw new RuntimeException(annotation.map() + " locator failed", e);
+				}
+			}
+		};
+	}
+}
+```
+
+### 
