@@ -1,6 +1,6 @@
 # Delegation By Annotations
 
-Ah, the joy of software design. In this tutorial, I will provide a concise guide on how to convert a template or strategy based design into an implementation driven by annotation. Similar and more advanced concepts could be found in an implementation of JEE CDI or any other popular frameworks like Spring. If you are not familiar with design patterns, I encourage you to pick up the catalog of design patterns classic by gang of four.
+Ah, the joy of software design. In this tutorial, I will provide a concise guide on how to convert a template or strategy based design into an implementation driven by annotations. Similar and more advanced concepts could be found in an implementation of JEE CDI or any other popular frameworks like Spring. If you are not familiar with design patterns, I encourage you to pick up the catalog of design patterns classic by gang of four.
 
 ## Delegation
 
@@ -52,16 +52,16 @@ and then we could change the travel method to depend on the two interfaces as fo
 	}
 ```
 
-Both locator and vehicle are an actulization of strategy design pattern. The startegy design pattern is a form of delegation by composition. As you can see both of calculate distance and time are moved to its respective interfaces. 
+Both locator and vehicle is an application of the strategy design pattern. The startegy design pattern is a form of delegation by composition. As you can see both of calculate distance and time are moved to its respective interfaces. 
 
 Delegation by composition is more prefered to delegation by inheritence due to the flexability provided by dependency injection. Dependency injection allwos you to inject different implementations to the same refernce at runtime based on the configurations of the system. We have many options from which we can select a vehicle implemenation like a bicycle, a car or a train. We also have different selections of locating tools like a paper or computer based map.
 
 ```java
-	enum Vehicle{
+	public enum Vehicle{
 		BICYCLE(), CAR(), TRAIN();
 	}
 	
-	enum MAP{
+	public enum MAP{
 		PAPER(), COMPUTERIZED();
 	}
 ```
@@ -91,37 +91,39 @@ Up to this point we have three aspects to consider:
 - Execution configuration which chooses between delegate implementation alternates.  
 
 ## Using Annotations
-As flexible as the above exmaple is, you have to do different things in order to introduce new functionality inside the system. For exmaple, you have to implement a new Locator or Transportation and add it to the traveling task. It may sound easy for such a trivial system but for more complex systems it may pose some sort of a challenge. It might be easier if we just could find a mechanism to intoduce a new functionality without going through all these steps. 
+As flexible as the above exmaple is, you have to do different things in order to introduce new functionality inside the system. For exmaple, you have to implement a new Locator or Transportation and add it to the traveling task. It may sound easy for such a trivial system but for more complex systems it may pose some sort of a challenge. It might be easier if we just could find a mechanism to introduce a new functionality without going through all these steps. 
 
 We could leverage annotations as a reference point of delegation on any method without resorting to implementing any interfaces.
 ```java
-class AnnotatedEntity{
-
-	@TransportationVehicle(vehicle=Vehicle.CAR)
-	public Long someMethod(Double distance){
-		// Do some calculations
-		return timeInSeconds;
-	}
+class AnnotatedEntity {
 	
-	@MapLocator(map=Map.COMPUTERIZED)
-	public Double someOtherMethod(Point a, Point b){
-		// Do some calculations
-		return distance;
-	}
+	 @TransportationVehicle(vehicle=Vehicle.CAR)
+	    public Long someMethod(Double distance){
+		 	System.out.println("Calculating Time");
+	        return 0L;
+	    }
+
+	    @MapLocator(map=MAP.COMPUTERIZED)
+	    public Double someOtherMethod(Point a, Point b){
+	        System.out.println("Calculating Distance");
+	        return 0D;
+	    }
 }
 ```
-And then register whatever entity using the delegate annotation on the delegator like this
+And then register whatever entity which is using the delegate annotation with the delegator like this
 
 ```java
 AnnotatedEntity someAnnotatedEntity = new AnnotatedEntity();
 TravelingTask travelingTask = new TravelingTask();
 travelingTask.registerDelegate(someAnnotatedEntity);
 ```
-That it! we could leave the heavy lifting to be taken care of by the delegator. Such as registering the delegate and finding the right methods to call at runtime. The rest of this tutorial I will explain how to implement delegation by annotation. The proposed solution should be taken as a refernece and not as a fully fledged solution.
+That it! we could leave the heavy lifting to be taken care of by the delegator. Such as registering the delegate and finding the right methods to call at runtime. 
+
+The rest of this tutorial, I will explain how to implement delegation by annotation. The proposed solution should be taken as a refernece and not as a fully fledged solution.
 
 ## Delegation Principal 
 
-A delegation principal applies validation rules on any arbitrary method assigned with a certain annotation, in case of being a good match it register that particular method with the delgator as a future execution refernce. Taking into account that the delegate interface should at least declare one method with a Delegate annotation. Now, let us look at some sequence diagrams that explains how delegation principal works.
+A delegation principal applies validation rules on any arbitrary method assigned with a certain annotation, in case of being a good match it registers that particular method with the delgator as a future execution refernce. Taking into account that the delegate interface should at least declare one method with a Delegate annotation. Now, let us look at some sequence diagrams that explains how a delegation principal works.
 
 ### Definition
 
@@ -390,3 +392,8 @@ Finally, here is register delegate method which includes the big picture of how 
 		
 	}
 ```
+
+Checkout the test suite within the source code to see a working example.
+
+## Conclusion
+Delegation by annotations has it own merits, best one yet is the client code simplicity. It might fall short when the delegate is complex to create, manage and/or configure.   
