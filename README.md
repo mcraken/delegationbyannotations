@@ -280,7 +280,7 @@ Add @Delegate annotation to calculateTime as follows
 	public Long calculateTime(Double distance);
 ```
 
-Now, create the LocatorPrincipal class
+Now, create the TransportationPrincipal class
 
 ```java
 // D -> Transportation, A -> TransportationVehicle annotation.
@@ -316,5 +316,37 @@ class TransportationPrincipal extends DelegationPrincipal<Transportation, Transp
 		};
 	}
 
+}
+```
+
+### Traveling Task Revisted
+
+Now, let us implement the delegation agents and registerDelegate method inside the TravelingTask. The follwoing code snippet shows selected parts of the TravelingTask
+
+```java
+class TravellingTask {
+	
+	// Create inner DelegationAgent class to register a transportation delegate
+	private DelegationAgent<Transportation, TransportationVehicle> transportationAgent = new DelegationAgent<Transportation, TransportationVehicle>() {
+		
+		// This method should be called by TransporationPrincipal class while
+		// applying the prinicipal to the traveling task
+		public void register(TransportationVehicle annotation,
+				Transportation delegate) {
+			
+			addVehicle(annotation.vehicle(), delegate);
+		}
+	};
+	
+	// Create inner DelegationAgent class to register a locator delegate
+	private DelegationAgent<Locator, MapLocator> locatorAgent = new DelegationAgent<Locator, MapLocator>() {
+		
+		// This method should be called by LocatorPrincipal class while
+		// applying the prinicipal to the traveling task
+		public void register(MapLocator annotation, Locator delegate) {
+			
+			addLocator(annotation.map(), delegate);
+		}
+	};
 }
 ```
