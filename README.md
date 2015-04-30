@@ -104,3 +104,20 @@ A delegation principal applies validation rules on any arbitrary method assigned
 ### Creation
 
 ![create delegation principal](https://cloud.githubusercontent.com/assets/6278849/7410334/1be9d0d0-ef2e-11e4-9652-1a23fae3fd49.jpg)
+
+```java
+	public DelegationPrincipal(
+			Class<D> delegateClass,
+			Class<A> annotationClass,
+			DelegationAgent<D, A> delegationAgent) {
+		
+		this.annotationClass = annotationClass;
+		this.delegationAgent = delegationAgent;
+		
+		Method delegateMethod = findDelegateMethod(delegateClass);
+		
+		this.returnType = delegateMethod.getReturnType();
+		this.parameters = delegateMethod.getParameterTypes();
+	}
+```
+### Apply
