@@ -78,7 +78,7 @@ Up to this point we have three aspects to consider:
 - Delegates that provide an implementation for the finer grained tasks.
 - Execution configuration which chooses between delegate implementation alternates.  
 
-## Delegation Prinicipal
+## Using Annotations
 As flexible as the above exmaple is, you have to do different things in order to introduce new functionality inside the system. For exmaple, you have to implement a new Locator or Transportation and add it to the traveling task. It may sound easy for such a trivial system but for more complex systems it may pose some sort of a challenge. It might be easier if we just could find a mechanism to intoduce a new functionality without going through all these steps. 
 
 We could leverage annotations as a reference point of delegation on any method without resorting to implementing any interfaces.
@@ -96,3 +96,8 @@ TravelingTask travelingTask = new TravelingTask();
 travelingTask.registerDelegate(someAnnotatedEntity);
 ```
 That it! we could leave the heavy lifting to be taking care of by the delegator. Such as registering the delegate and finding the right method to call at runtime.
+
+## Delegation Principal 
+
+A delegation principal applies validation rules on any arbitrary method assigned with a certain annotation, in case of being a good match it register that particular method with the delgator as a future execution refernce. Taking into account that the delegate interface should at least declare one method with a Delegate annotation.
+
