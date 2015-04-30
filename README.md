@@ -319,9 +319,13 @@ class TransportationPrincipal extends DelegationPrincipal<Transportation, Transp
 }
 ```
 
-### Traveling Task Revisted
+## Traveling Task Revisted
 
-Now, let us implement the delegation agents and registerDelegate method inside the TravelingTask. The follwoing code snippet shows selected parts of the TravelingTask
+Now, let us implement the delegation agents and registerDelegate method inside the TravelingTask. The follwoing code snippet shows selected parts of the TravelingTask.
+
+### Creation
+
+![sequence diagram1](https://cloud.githubusercontent.com/assets/6278849/7411972/cd39fa18-ef3d-11e4-85fa-69cea98c2b01.jpg)
 
 ```java
 class TravellingTask {
@@ -348,5 +352,24 @@ class TravellingTask {
 			addLocator(annotation.map(), delegate);
 		}
 	};
+	
+	private HashMap<Vehicle, Transportation> vehicles;
+	private HashMap<MAP, Locator> locators;
+	
+	private LocatorPrincipal locatorPrincipal;
+	private TransportationPrincipal transportationPrincipal;
+	
+	public TravellingTask() {
+		
+		locators = new HashMap<TravellingTask.MAP, Locator>();
+		
+		vehicles = new HashMap<TravellingTask.Vehicle, Transportation>();
+		
+		// Instantiate the locator principal using inner locator agent class
+		locatorPrincipal = new LocatorPrincipal(Locator.class, MapLocator.class, locatorAgent);
+		
+		// Instantiate the transportation principal using inner transportation agent class
+		transportationPrincipal = new TransportationPrincipal(Transportation.class, TransportationVehicle.class, transportationAgent);
+	}
 }
 ```
