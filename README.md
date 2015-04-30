@@ -1,6 +1,6 @@
 # Delegation By Annotations
 
-Ah, the joy of software design. In this article, I will provide a concise guide on how to convert a template or strategy based design into an implementation driven by annotation. Similar and more advanced concepts could be found in an implementation of JEE CDI or any other popular frameworks like Spring. If you are not familiar with design patterns, I encourage you to pick up the catalog of design patterns classic by gang of four.
+Ah, the joy of software design. In this tutorial, I will provide a concise guide on how to convert a template or strategy based design into an implementation driven by annotation. Similar and more advanced concepts could be found in an implementation of JEE CDI or any other popular frameworks like Spring. If you are not familiar with design patterns, I encourage you to pick up the catalog of design patterns classic by gang of four.
 
 ## Delegation
 
@@ -95,19 +95,29 @@ As flexible as the above exmaple is, you have to do different things in order to
 
 We could leverage annotations as a reference point of delegation on any method without resorting to implementing any interfaces.
 ```java
-@Transportation(name="car")
-public Long someMethod(Double distance){
-	// Do some calculations
-	return timeInSeconds;
+class AnnotatedEntity{
+
+	@TransportationVehicle(vehicle=Vehicle.CAR)
+	public Long someMethod(Double distance){
+		// Do some calculations
+		return timeInSeconds;
+	}
+	
+	@MapLocator(map=Map.COMPUTERIZED)
+	public Double someOtherMethod(Point a, Point b){
+		// Do some calculations
+		return distance;
+	}
 }
 ```
-And then we could register whatever entity using the delegate annotation on the delegator like this
+And then register whatever entity using the delegate annotation on the delegator like this
 
 ```java
+AnnotatedEntity someAnnotatedEntity = new AnnotatedEntity();
 TravelingTask travelingTask = new TravelingTask();
 travelingTask.registerDelegate(someAnnotatedEntity);
 ```
-That it! we could leave the heavy lifting to be taking care of by the delegator. Such as registering the delegate and finding the right method to call at runtime.
+That it! we could leave the heavy lifting to be taking care of by the delegator. Such as registering the delegate and finding the right methods to call at runtime. The rest of this tutorial I will explain how to implement delegation by annotation. The proposed solution should be taken as a refernece and not as a fully fledged solution.
 
 ## Delegation Principal 
 
@@ -117,7 +127,7 @@ A delegation principal applies validation rules on any arbitrary method assigned
 
 ```java
 // D -> Any arbitrary delegate, A -> Any annotation type.
-public abstract class DelegationPrincipal<D, A extends Annotation> {
+abstract class DelegationPrincipal<D, A extends Annotation> {
 
 	private Class<A> annotationClass;
 	
@@ -195,8 +205,8 @@ public abstract class DelegationPrincipal<D, A extends Annotation> {
 	}
 ```
 
-## Implementing a Principl
-The following code snippets explains how to extend delegation principal in order to create two new principals one for the Transportation interface and another one for the Locator.
+## Implementing Principals
+The following code snippets explain how to extend delegation principal in order to create two new principals one for the Transportation interface and another one for the Locator.
 
 ### Locator
 
@@ -209,15 +219,19 @@ public @interface MapLocator {
 	MAP map();
 }
 ```
-
+Add @Delegate annotation to calculateDistance as follows
+```java
+	@Delegate	
+	public Double calculateDistance(Point a, Point b);
+```
 Now, create the LocatorPrincipal class
 
 ```java
 
 // D -> Locator and A -> MapLocator annotation. 
-public class TransportationPrincipal extends DelegationPrincipal<Locator, MapLocator> {
+class LocatorPrincipal extends DelegationPrincipal<Locator, MapLocator> {
 
-	public TransportationPrincipal(Class<Locator> delegateClass,
+	public LocatorPrincipal(Class<Locator> delegateClass,
 			Class<MapLocator> annotationClass,
 			DelegationAgent<Locator, MapLocator> delegationAgent) {
 		
@@ -247,4 +261,60 @@ public class TransportationPrincipal extends DelegationPrincipal<Locator, MapLoc
 }
 ```
 
-### 
+### Transportation
+
+Again, Start with the annotation
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface TransportationVehicle {
+	Vehicle vehicle();
+}
+```
+
+Add @Delegate annotation to calculateTime as follows
+
+```java
+	@Delegate
+	public Long calculateTime(Double distance);
+```
+
+Now, create the LocatorPrincipal class
+
+```java
+// D -> Transportation, A -> TransportationVehicle annotation.
+class TransportationPrincipal extends DelegationPrincipal<Transportation, TransportationVehicle> {
+
+	public TransportationPrincipal(
+			Class<Transportation> delegateClass,
+			Class<TransportationVehicle> annotationClass,
+			DelegationAgent<Transportation, TransportationVehicle> delegationAgent) {
+		
+		super(delegateClass, annotationClass, delegationAgent);
+	}
+
+	@Override
+	protected Transportation apply(final Object receiver, final Method target,
+			final TransportationVehicle annotation) {
+		
+		return new Transportation() {
+			
+			public Long calculateTime(Double distance) {
+				
+				try {
+					
+					// invoke time calculation method
+					return (Long) target.invoke(receiver, distance);
+					
+				} catch (Exception e) {
+					
+				throw new RuntimeException(annotation.vehicle() +  " transportation delegate has failed", e);
+				
+				} 
+			}
+		};
+	}
+
+}
+```
