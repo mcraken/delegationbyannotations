@@ -5,10 +5,8 @@ package com.mcplissken.delegation.test;
 
 import org.junit.Test;
 
-import com.mcplissken.delegation.AnnotatedEntity;
-import com.mcplissken.delegation.TravellingTask;
-import com.mcplissken.delegation.TravellingTask.MAP;
-import com.mcplissken.delegation.TravellingTask.Vehicle;
+import com.mcplissken.delegation.test.TravellingTask.MAP;
+import com.mcplissken.delegation.test.TravellingTask.Vehicle;
 
 
 

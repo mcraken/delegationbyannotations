@@ -1,11 +1,12 @@
 /**
  * 
  */
-package com.mcplissken.delegation;
+package com.mcplissken.delegation.test;
+
+import com.mcplissken.delegation.test.TravellingTask.MAP;
+import com.mcplissken.delegation.test.TravellingTask.Vehicle;
 
 
-import com.mcplissken.delegation.TravellingTask.MAP;
-import com.mcplissken.delegation.TravellingTask.Vehicle;
 
 /**
  * @author 	Sherief Shawky
@@ -13,7 +14,7 @@ import com.mcplissken.delegation.TravellingTask.Vehicle;
  * @date 	Apr 30, 2015
  */
 public class AnnotatedEntity {
-	
+	 
 	 @TransportationVehicle(vehicle=Vehicle.CAR)
 	    public Long someMethod(Double distance){
 		 	System.out.println("Calculating Time");

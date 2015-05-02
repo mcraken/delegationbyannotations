@@ -1,14 +1,14 @@
 /**
  * 
  */
-package com.mcplissken.delegation;
+package com.mcplissken.delegation.test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.mcplissken.delegation.TravellingTask.Vehicle;
+import com.mcplissken.delegation.test.TravellingTask.Vehicle;
 
 /**
  * @author 	Sherief Shawky

@@ -1,10 +1,12 @@
 /**
  * 
  */
-package com.mcplissken.delegation;
+package com.mcplissken.delegation.test;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+
+import com.mcplissken.delegation.DelegationAgent;
 
 /**
  * @author 	Sherief Shawky

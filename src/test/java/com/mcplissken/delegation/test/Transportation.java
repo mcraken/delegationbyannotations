@@ -1,7 +1,9 @@
 /**
  * 
  */
-package com.mcplissken.delegation;
+package com.mcplissken.delegation.test;
+
+import com.mcplissken.delegation.Delegate;
 
 /**
  * @author 	Sherief Shawky
